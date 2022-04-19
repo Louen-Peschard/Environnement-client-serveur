@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Mar 19 Avril 2022 à 12:44
+-- Généré le :  Mar 19 Avril 2022 à 13:01
 -- Version du serveur :  5.7.11
 -- Version de PHP :  5.6.18
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `changement_zone` (
   `id_plante` int(11) NOT NULL,
   `id_zone` int(11) NOT NULL,
-  `date` date NOT NULL
+  `date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -93,7 +93,7 @@ CREATE TABLE `graine` (
 CREATE TABLE `historique_cycle` (
   `id_plante` int(11) NOT NULL,
   `id_cycle` int(11) NOT NULL,
-  `date` date NOT NULL
+  `date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -106,7 +106,7 @@ CREATE TABLE `historique_etat` (
   `id_plante` int(11) NOT NULL,
   `id_etat` int(11) NOT NULL,
   `id_statut` int(11) NOT NULL,
-  `date` date NOT NULL
+  `date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -141,9 +141,9 @@ CREATE TABLE `jardin_utilisateur` (
 
 CREATE TABLE `plante` (
   `id` int(11) NOT NULL,
-  `date_semis` date NOT NULL,
-  `date_repiquage` date NOT NULL,
-  `date_recolte` date NOT NULL,
+  `date_semis` datetime NOT NULL,
+  `date_repiquage` datetime NOT NULL,
+  `date_recolte` datetime NOT NULL,
   `quantite_recolte` int(10) NOT NULL,
   `id_graine` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
