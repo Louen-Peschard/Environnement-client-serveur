@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Mar 19 Avril 2022 à 13:01
+-- Généré le :  Mer 20 Avril 2022 à 08:27
 -- Version du serveur :  5.7.11
 -- Version de PHP :  5.6.18
 
@@ -23,27 +23,34 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structure de la table `changement_zone`
---
-
-CREATE TABLE `changement_zone` (
-  `id_plante` int(11) NOT NULL,
-  `id_zone` int(11) NOT NULL,
-  `date` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `classification`
 --
 
 CREATE TABLE `classification` (
   `id` int(11) NOT NULL,
   `titre` varchar(50) NOT NULL,
-  `description` text NOT NULL,
-  `id_classification` int(11) NOT NULL
+  `id_niveau` int(11) DEFAULT NULL,
+  `id_classification` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `classification`
+--
+
+INSERT INTO `classification` (`id`, `titre`, `id_niveau`, `id_classification`) VALUES
+(1, 'Plantae', 1, NULL),
+(2, 'Tracheobionta', 2, 1),
+(3, 'Magnoliophyta', 3, 2),
+(4, 'Liliopsida', 4, 3),
+(5, 'Liliidae', 5, 4),
+(6, 'Orchidales', 6, 5),
+(7, 'Orchidaceae', 7, 6),
+(8, 'Vandoideae', 8, 7),
+(9, 'Magnoliopsida', 4, 3),
+(10, 'Magnoliidae', 5, 9),
+(11, 'Papaverales', 6, 10),
+(12, 'Papaveraceae', 7, 11),
+(13, 'Papaver', 8, 12);
 
 -- --------------------------------------------------------
 
@@ -112,6 +119,18 @@ CREATE TABLE `historique_etat` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `historique_zone`
+--
+
+CREATE TABLE `historique_zone` (
+  `id_plante` int(11) NOT NULL,
+  `id_zone` int(11) NOT NULL,
+  `date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `jardin`
 --
 
@@ -136,6 +155,32 @@ CREATE TABLE `jardin_utilisateur` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `niveau_classification`
+--
+
+CREATE TABLE `niveau_classification` (
+  `id` int(11) NOT NULL,
+  `nom` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `niveau_classification`
+--
+
+INSERT INTO `niveau_classification` (`id`, `nom`) VALUES
+(1, 'Règne'),
+(2, 'Sous-règne'),
+(3, 'Division'),
+(4, 'Classe'),
+(5, 'Sous_classe'),
+(6, 'Ordre'),
+(7, 'Famille'),
+(8, 'Sous-famille'),
+(9, 'Genre');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `plante`
 --
 
@@ -145,7 +190,11 @@ CREATE TABLE `plante` (
   `date_repiquage` datetime NOT NULL,
   `date_recolte` datetime NOT NULL,
   `quantite_recolte` int(10) NOT NULL,
-  `id_graine` int(11) NOT NULL
+  `id_graine` int(11) NOT NULL,
+  `id_zone` int(11) NOT NULL,
+  `id_etat` int(11) NOT NULL,
+  `id_statut` int(11) NOT NULL,
+  `id_cycle` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -205,20 +254,13 @@ CREATE TABLE `zone` (
 --
 
 --
--- Index pour la table `changement_zone`
---
-ALTER TABLE `changement_zone`
-  ADD PRIMARY KEY (`id_plante`,`id_zone`),
-  ADD KEY `id_plante` (`id_plante`),
-  ADD KEY `id_zone` (`id_zone`);
-
---
 -- Index pour la table `classification`
 --
 ALTER TABLE `classification`
   ADD PRIMARY KEY (`id`),
   ADD KEY `titre` (`titre`),
-  ADD KEY `id_classification` (`id_classification`);
+  ADD KEY `id_classification` (`id_classification`),
+  ADD KEY `id_niveau` (`id_niveau`);
 
 --
 -- Index pour la table `cycle_vegetatif`
@@ -255,6 +297,14 @@ ALTER TABLE `historique_etat`
   ADD KEY `id_statut` (`id_statut`);
 
 --
+-- Index pour la table `historique_zone`
+--
+ALTER TABLE `historique_zone`
+  ADD PRIMARY KEY (`id_plante`,`id_zone`),
+  ADD KEY `id_plante` (`id_plante`),
+  ADD KEY `id_zone` (`id_zone`);
+
+--
 -- Index pour la table `jardin`
 --
 ALTER TABLE `jardin`
@@ -269,11 +319,21 @@ ALTER TABLE `jardin_utilisateur`
   ADD KEY `id_jardin` (`id_jardin`);
 
 --
+-- Index pour la table `niveau_classification`
+--
+ALTER TABLE `niveau_classification`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Index pour la table `plante`
 --
 ALTER TABLE `plante`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id_graine` (`id_graine`);
+  ADD KEY `id_graine` (`id_graine`),
+  ADD KEY `id_zone` (`id_zone`),
+  ADD KEY `id_etat` (`id_etat`),
+  ADD KEY `id_statut` (`id_statut`),
+  ADD KEY `id_cycle` (`id_cycle`);
 
 --
 -- Index pour la table `rusticite`
@@ -309,7 +369,7 @@ ALTER TABLE `zone`
 -- AUTO_INCREMENT pour la table `classification`
 --
 ALTER TABLE `classification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT pour la table `cycle_vegetatif`
 --
@@ -330,6 +390,11 @@ ALTER TABLE `graine`
 --
 ALTER TABLE `jardin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT pour la table `niveau_classification`
+--
+ALTER TABLE `niveau_classification`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT pour la table `rusticite`
 --
@@ -355,17 +420,11 @@ ALTER TABLE `zone`
 --
 
 --
--- Contraintes pour la table `changement_zone`
---
-ALTER TABLE `changement_zone`
-  ADD CONSTRAINT `changement_zone_ibfk_1` FOREIGN KEY (`id_zone`) REFERENCES `zone` (`id`),
-  ADD CONSTRAINT `changement_zone_ibfk_2` FOREIGN KEY (`id_plante`) REFERENCES `plante` (`id`);
-
---
 -- Contraintes pour la table `classification`
 --
 ALTER TABLE `classification`
-  ADD CONSTRAINT `classification_ibfk_1` FOREIGN KEY (`id_classification`) REFERENCES `classification` (`id`);
+  ADD CONSTRAINT `classification_ibfk_1` FOREIGN KEY (`id_classification`) REFERENCES `classification` (`id`),
+  ADD CONSTRAINT `classification_ibfk_2` FOREIGN KEY (`id_niveau`) REFERENCES `niveau_classification` (`id`);
 
 --
 -- Contraintes pour la table `graine`
@@ -389,6 +448,13 @@ ALTER TABLE `historique_etat`
   ADD CONSTRAINT `historique_etat_ibfk_3` FOREIGN KEY (`id_plante`) REFERENCES `plante` (`id`) ON DELETE CASCADE;
 
 --
+-- Contraintes pour la table `historique_zone`
+--
+ALTER TABLE `historique_zone`
+  ADD CONSTRAINT `historique_zone_ibfk_1` FOREIGN KEY (`id_zone`) REFERENCES `zone` (`id`),
+  ADD CONSTRAINT `historique_zone_ibfk_2` FOREIGN KEY (`id_plante`) REFERENCES `plante` (`id`);
+
+--
 -- Contraintes pour la table `jardin`
 --
 ALTER TABLE `jardin`
@@ -405,7 +471,11 @@ ALTER TABLE `jardin_utilisateur`
 -- Contraintes pour la table `plante`
 --
 ALTER TABLE `plante`
-  ADD CONSTRAINT `plante_ibfk_1` FOREIGN KEY (`id_graine`) REFERENCES `graine` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `plante_ibfk_1` FOREIGN KEY (`id_graine`) REFERENCES `graine` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `plante_ibfk_2` FOREIGN KEY (`id_zone`) REFERENCES `zone` (`id`),
+  ADD CONSTRAINT `plante_ibfk_3` FOREIGN KEY (`id_statut`) REFERENCES `statut` (`id`),
+  ADD CONSTRAINT `plante_ibfk_4` FOREIGN KEY (`id_etat`) REFERENCES `etat` (`id`),
+  ADD CONSTRAINT `plante_ibfk_5` FOREIGN KEY (`id_cycle`) REFERENCES `cycle` (`id`);
 
 --
 -- Contraintes pour la table `zone`
