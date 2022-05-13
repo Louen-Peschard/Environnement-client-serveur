@@ -342,7 +342,7 @@ COMMIT;
 
 -- ALTER TABLE pour un lien entre plante et utilisateur
 ALTER TABLE plante ADD owner INT(11);
-ALTER TABLE plante ADD CONSTRAINT fk_user FOREIGN KEY (owner) REFERENCES utilisateur(id_utilisateur)
+ALTER TABLE plante ADD CONSTRAINT fk_user FOREIGN KEY (owner) REFERENCES utilisateur(id_utilisateur);
 
 
 -- Ajout des tables notes (3 au total)
