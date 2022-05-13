@@ -1,6 +1,7 @@
-#Trigger histo cycle végétatif : 
+-- Trigger histo cycle végétatif : 
 DROP TRIGGER IF EXISTS `histo_cycle_vege`;
-CREATE DEFINER=`admin`@`%` TRIGGER `histo_cycle_vege` AFTER UPDATE ON `plante` FOR EACH ROW BEGIN
+CREATE TRIGGER `histo_cycle_vege` AFTER UPDATE ON `plante` FOR EACH ROW 
+BEGIN
 IF OLD.id_cycle_vegetatif != NEW.id_cycle_vegetatif
     THEN 
         INSERT INTO historique_cycle (id_plante, id_cycle_vegetatif, date_changement) VALUES (OLD.id_plante, OLD.id_cycle_vegetatif, CURRENT_TIMESTAMP);
@@ -8,8 +9,10 @@ IF OLD.id_cycle_vegetatif != NEW.id_cycle_vegetatif
 END IF;
 END
 
-#Trigger histo état plante :
-DROP TRIGGER IF EXISTS `histo_etat_plante`;CREATE DEFINER=`admin`@`%` TRIGGER `histo_etat_plante` AFTER UPDATE ON `etat_plante` FOR EACH ROW BEGIN
+-- Trigger histo état plante :
+DROP TRIGGER IF EXISTS `histo_etat_plante`;
+CREATE TRIGGER `histo_etat_plante` AFTER UPDATE ON `etat_plante` FOR EACH ROW 
+BEGIN
 IF OLD.id_etat != NEW.id_etat
     THEN 
         INSERT INTO historique_etat (id_etat, id_plante, date_changement, date, status) 
@@ -19,8 +22,10 @@ IF OLD.id_etat != NEW.id_etat
 END IF;
 END
 
-#Trigger histo zone plante : 
-DROP TRIGGER IF EXISTS `histo_changement_zone`;CREATE DEFINER=`admin`@`%` TRIGGER `histo_changement_zone` AFTER UPDATE ON `plante` FOR EACH ROW BEGIN
+-- Trigger histo zone plante : 
+DROP TRIGGER IF EXISTS `histo_changement_zone`;
+CREATE TRIGGER `histo_changement_zone` AFTER UPDATE ON `plante` FOR EACH ROW 
+BEGIN
 IF OLD.id_zone != NEW.id_zone
     THEN 
         INSERT INTO historique_zone (id_plante, id_zone, date_changement) 
@@ -30,7 +35,7 @@ IF OLD.id_zone != NEW.id_zone
 END IF;
 END
 
-#Trigger suppresion plante :
+-- Trigger suppresion plante :
 DROP TRIGGER IF EXISTS suppression_plante;
 DELIMITER //
 CREATE TRIGGER suppression_plante AFTER DELETE ON plante
