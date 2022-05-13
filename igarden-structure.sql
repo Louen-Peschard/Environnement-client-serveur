@@ -336,7 +336,7 @@ COMMIT;
 
 
 ----------------------------------------------------------------------
---MODIFICATIONS 13/05/22----------------------------------------------
+-- MODIFICATIONS 13/05/22----------------------------------------------
 ----------------------------------------------------------------------
 
 
@@ -398,7 +398,7 @@ ALTER TABLE `notes_graine`
 -----------------------------
 --
 
---Ajout de multiples colonnes
+-- Ajout de multiples colonnes
 ALTER TABLE zone
   ADD `longitude` decimal(8,6) DEFAULT NULL,
   ADD `latitude` decimal(8,6) DEFAULT NULL,
@@ -425,7 +425,7 @@ ALTER TABLE plante
   ADD `temperature_minimal` decimal(5,2) DEFAULT NULL;
 
 
-/*Ajout d'un user Demo, accès aux consultations tables et vues de i_garden uniquement */
+-- Ajout d'un user Demo, accès aux consultations tables et vues de i_garden uniquement
 CREATE USER 'Demo'@'localhost' IDENTIFIED BY 'demo';
 GRANT SELECT ON i_garden.* TO 'Demo'@'localhost';
 
