@@ -395,7 +395,7 @@ ALTER TABLE `notes_graine`
   ADD CONSTRAINT `fk_id_notes_graine` FOREIGN KEY (`id_graine`) REFERENCES `graine` (`id_graine`) ON DELETE CASCADE;
 
 --
------------------------------
+-- ---------------------------
 --
 
 -- Ajout de multiples colonnes
