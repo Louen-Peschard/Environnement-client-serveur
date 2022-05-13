@@ -426,6 +426,7 @@ ALTER TABLE plante
 
 
 -- Ajout d'un user Demo, accès aux consultations tables et vues de i_garden uniquement
+DROP USER IF EXISTS 'Demo'@'localhost';
 CREATE USER 'Demo'@'localhost' IDENTIFIED BY 'demo';
 GRANT SELECT ON i_garden.* TO 'Demo'@'localhost';
 
