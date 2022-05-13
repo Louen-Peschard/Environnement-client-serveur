@@ -333,3 +333,163 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+----------------------------------------------------------------------
+--MODIFICATIONS 13/05/22----------------------------------------------
+----------------------------------------------------------------------
+
+
+-- ALTER TABLE pour un lien entre plante et utilisateur
+ALTER TABLE plante ADD owner INT(11);
+ALTER TABLE plante ADD CONSTRAINT fk_user FOREIGN KEY (owner) REFERENCES utilisateur(id_utilisateur)
+
+
+-- Ajout des tables notes (3 au total)
+-- Notes plante
+DROP TABLE IF EXISTS `notes_plante`;
+CREATE TABLE IF NOT EXISTS `notes_plante` (
+  `id_note` INT NOT NULL AUTO_INCREMENT,
+  `id_plante` INT NOT NULL,
+  `type` enum('Texte','Audio') NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `lien_audio` VARCHAR(150) DEFAULT NULL,
+  `date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_note`),
+  KEY `id_plante_idx` (`id_plante`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `notes_plante`
+  ADD CONSTRAINT `fk_id_notes_plante` FOREIGN KEY (`id_plante`) REFERENCES `plante` (`id_plante`) ON DELETE CASCADE;
+
+-- Notes zone
+DROP TABLE IF EXISTS `notes_zone`;
+CREATE TABLE IF NOT EXISTS `notes_zone` (
+  `id_note` INT NOT NULL AUTO_INCREMENT,
+  `id_zone` INT NOT NULL,
+  `type` enum('Texte','Audio') NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `lien_audio` VARCHAR(150) DEFAULT NULL,
+  `date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_note`),
+  KEY `id_zone_idx` (`id_zone`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `notes_zone`
+  ADD CONSTRAINT `fk_id_notes_zone` FOREIGN KEY (`id_zone`) REFERENCES `zone` (`id_zone`) ON DELETE CASCADE;
+
+-- Notes graine
+DROP TABLE IF EXISTS `notes_graine`;
+CREATE TABLE IF NOT EXISTS `notes_graine` (
+  `id_note` INT NOT NULL AUTO_INCREMENT,
+  `id_graine` INT NOT NULL,
+  `type` enum('Texte','Audio') NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `lien_audio` VARCHAR(150) DEFAULT NULL,
+  `date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_note`),
+  KEY `id_graine_idx` (`id_graine`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `notes_graine`
+  ADD CONSTRAINT `fk_id_notes_graine` FOREIGN KEY (`id_graine`) REFERENCES `graine` (`id_graine`) ON DELETE CASCADE;
+
+--
+-----------------------------
+--
+
+--Ajout de multiples colonnes
+ALTER TABLE zone
+  ADD `longitude` decimal(8,6) DEFAULT NULL,
+  ADD `latitude` decimal(8,6) DEFAULT NULL,
+  ADD `largeur` int(11) DEFAULT NULL,
+  ADD `hauteur` int(11) DEFAULT NULL;
+
+
+-- Ajout des noms multiples pour graine
+DROP TABLE IF EXISTS `nom_graine`;
+CREATE TABLE IF NOT EXISTS `nom_graine` (
+  `id_nom` INT NOT NULL AUTO_INCREMENT,
+  `id_graine` INT NOT NULL,
+  `nom` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id_nom`),
+  KEY `id_graine_idx` (`id_graine`)
+) AS SELECT id_graine, nom FROM graine;
+
+ALTER TABLE graine
+DROP nom;
+
+
+-- Ajout colonne température dans plante
+ALTER TABLE plante
+  ADD `temperature_minimal` decimal(5,2) DEFAULT NULL;
+
+
+/*Ajout d'un user Demo, accès aux consultations tables et vues de i_garden uniquement */
+CREATE USER 'Demo'@'localhost' IDENTIFIED BY 'demo';
+GRANT SELECT ON i_garden.* TO 'Demo'@'localhost';
+
+-- Tables action
+DROP TABLE IF EXISTS `type_action`;
+CREATE TABLE IF NOT EXISTS `type_action` (
+  `id_type_action` INT NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(30) NOT NULL,
+  `description` VARCHAR(50),
+  `logo` VARCHAR(150),
+  PRIMARY KEY (`id_type_action`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `action_jardin`;
+CREATE TABLE IF NOT EXISTS `action_jardin` (
+  `id_action` INT NOT NULL AUTO_INCREMENT,
+  `id_utilisateur` INT NOT NULL,
+  `id_jardin` INT NOT NULL,
+  `id_type_action` INT NOT NULL,
+  `frequence` VARCHAR(100) NOT NULL,
+  `date_debut` DATE NOT NULL,
+  `date_fin` DATE NOT NULL,
+  `statut` enum('A faire', 'Realise', 'Abandonne') NOT NULL,
+  PRIMARY KEY (`id_action`),
+  CONSTRAINT FOREIGN KEY `id_utilisateur_idx` (`id_utilisateur`) REFERENCES utilisateur(id_utilisateur),
+  CONSTRAINT FOREIGN KEY `id_jardin_idx` (`id_jardin`) REFERENCES jardin(id_jardin),
+  CONSTRAINT FOREIGN KEY `id_type_action_idx` (`id_type_action`) REFERENCES type_action(id_type_action)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `historique_action_jardin`;
+CREATE TABLE IF NOT EXISTS `historique_action_jardin` (
+  `id_historique` INT NOT NULL AUTO_INCREMENT,
+  `id_action` INT NOT NULL,
+  `statut` enum('A faire', 'Realise', 'Abandonne') NOT NULL,
+  `date` DATETIME NOT NULL,
+  PRIMARY KEY (`id_historique`),
+  CONSTRAINT FOREIGN KEY `id_action_idx` (`id_action`) REFERENCES action_jardin(id_action)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `action_zone`;
+CREATE TABLE IF NOT EXISTS `action_zone` (
+  `id_action` INT NOT NULL AUTO_INCREMENT,
+  `id_utilisateur` INT NOT NULL,
+  `id_zone` INT NOT NULL,
+  `id_type_action` INT NOT NULL,
+  `frequence` VARCHAR(100) NOT NULL,
+  `date_debut` DATE NOT NULL,
+  `date_fin` DATE NOT NULL,
+  `statut` enum('A faire', 'Realise', 'Abandonne') NOT NULL,
+  PRIMARY KEY (`id_action`),
+  CONSTRAINT FOREIGN KEY `id_utilisateur_idx` (`id_utilisateur`) REFERENCES utilisateur(id_utilisateur),
+  CONSTRAINT FOREIGN KEY `id_zone_idx` (`id_zone`) REFERENCES zone(id_zone),
+  CONSTRAINT FOREIGN KEY `id_type_action_idx` (`id_type_action`) REFERENCES type_action(id_type_action)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `historique_action_zone`;
+CREATE TABLE IF NOT EXISTS `historique_action_zone` (
+  `id_historique` INT NOT NULL AUTO_INCREMENT,
+  `id_action` INT NOT NULL,
+  `statut` enum('A faire', 'Realise', 'Abandonne') NOT NULL,
+  `date` DATETIME NOT NULL,
+  PRIMARY KEY (`id_historique`),
+  CONSTRAINT FOREIGN KEY `id_action_idx` (`id_action`) REFERENCES action_zone(id_action)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
